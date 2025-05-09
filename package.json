@@ -1,0 +1,45 @@
+{
+  "name": "query-stats-sparql",
+  "module": "index.ts",
+  "type": "module",
+  "author": {
+    "name": "Bryan-Elliott Tam"
+  },
+  "description": "A simple library to extract basic statistics from SPARQL queries.",
+  "homepage": "https://github.com/constraintAutomaton/query-stats-sparql.js",
+  "license": "MIT",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "keywords": [
+    "SPARQL",
+    "statistic"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "sparqlalgebrajs": "^5.0.1"
+  },
+  "scripts": {
+    "build:all" : "bun run build && bun run build:cjs && tsc --emitDeclarationOnly",
+    "build": "bun build ./src/index.ts --outdir dist --sourcemap --outdir dist/esm --production",
+    "build:cjs": "bun build ./src/index.ts --format 'cjs' --outdir dist/cjs --sourcemap --production",
+    "publish-npm": "bun run build:all && npm publish"
+  }
+}
