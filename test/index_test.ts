@@ -113,7 +113,7 @@ describe(calculate_statistic.name, () => {
         SELECT * WHERE {
             ?s ?p ?o.
             ?s <ex:a>* <ex:b>.
-            ?p <ex:b>|<ex:e> <ex:c>.
+            ?p !<ex:b> <ex:c>.
             }`);
         const resp = calculate_statistic(query);
 
@@ -136,29 +136,32 @@ describe(calculate_statistic.name, () => {
             ?s ?p ?o.
         }
         UNION {
-            ?s <ex:a> <ex:b>.
-            ?p <ex:b> <ex:c>.
+            ?s <ex:a>/<ex:b> <ex:b>.
+            ?p <ex:b>+ <ex:c>.
         }
         UNION {
             <ex:a> ?p ?o.
         }
 
-        ?s ?p ?o.
+        ?s ^<ex:foo>|(<ex:bar>/<ex:boo>) ?o.
 
         {
             <ex:d> <ex:a> ?v.
         }
         UNION {
-            <ex:d> <ex:a> ?k.
+            <ex:d> ^<ex:a> ?k.
         }
         }
         `);
         const resp = calculate_statistic(query);
 
         const expected_statistic: Partial<IQueryStatistic> = {
-            number_bgp: 6,
-            number_triple_patterns: 7,
-            number_union:2
+            number_bgp: 5,
+            number_triple_patterns: 8,
+            number_property_path:4,
+            number_recursive_property_path:1,
+            number_union: 2,
+            number_union_with_multiple_triple_triple_patterns: 1
         }
 
         expect(resp).toStrictEqual(build_statistic(expected_statistic))
@@ -182,7 +185,7 @@ describe(calculate_statistic.name, () => {
         const expected_statistic: Partial<IQueryStatistic> = {
             number_bgp: 2,
             number_triple_patterns: 3,
-            number_distinct:2
+            number_distinct: 2
         }
 
         expect(resp).toStrictEqual(build_statistic(expected_statistic))
@@ -206,7 +209,7 @@ describe(calculate_statistic.name, () => {
         const expected_statistic: Partial<IQueryStatistic> = {
             number_bgp: 2,
             number_triple_patterns: 3,
-            number_limit:2
+            number_limit: 2
         }
 
         expect(resp).toStrictEqual(build_statistic(expected_statistic))
@@ -230,6 +233,7 @@ const keysIQueryStatistic: (keyof IQueryStatistic)[] = [
     "number_optional",
     "number_property_path",
     "number_recursive_property_path",
+    "number_union_with_multiple_triple_triple_patterns",
     "number_union",
     "number_distinct",
     "number_limit"

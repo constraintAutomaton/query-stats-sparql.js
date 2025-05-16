@@ -9,6 +9,7 @@ function generate_recursive_operation_callback(): [RecursiveOperationCallbackRec
         number_property_path: 0,
         number_recursive_property_path: 0,
         number_union: 0,
+        number_union_with_multiple_triple_triple_patterns: 0,
         number_distinct: 0,
         number_limit: 0
     };
@@ -59,8 +60,24 @@ function generate_recursive_operation_callback(): [RecursiveOperationCallbackRec
             ++stats.number_property_path;
             return true;
         },
-        [Algebra.types.UNION]: () => {
+        [Algebra.types.UNION]: (op: Algebra.Union) => {
             ++stats.number_union;
+            for (const gp of op.input) {
+                let number_tp = 0;
+                Util.recurseOperation(gp, {
+                    [Algebra.types.PATTERN]: () => {
+                        ++number_tp;
+                        return true;
+                    },
+                    [Algebra.types.PATH]: () => {
+                        ++number_tp;
+                        return true;
+                    },
+                });
+                if (number_tp > 1) {
+                    ++stats.number_union_with_multiple_triple_triple_patterns;
+                }
+            }
             return true;
         },
         [Algebra.types.DISTINCT]: () => {
@@ -91,6 +108,7 @@ export interface IQueryStatistic {
     number_property_path: number,
     number_recursive_property_path: number,
     number_union: number,
+    number_union_with_multiple_triple_triple_patterns: number,
     number_distinct: number,
     number_limit: number,
 }
