@@ -76,6 +76,7 @@ function generate_recursive_operation_callback(): [RecursiveOperationCallbackRec
                 });
                 if (number_tp > 1) {
                     ++stats.number_union_with_multiple_triple_triple_patterns;
+                    break;
                 }
             }
             return true;

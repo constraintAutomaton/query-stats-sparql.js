@@ -8,7 +8,7 @@
   "description": "A simple library to extract basic statistics from SPARQL queries.",
   "homepage": "https://github.com/constraintAutomaton/query-stats-sparql.js",
   "license": "MIT",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "keywords": [

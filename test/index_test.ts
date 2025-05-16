@@ -167,6 +167,47 @@ describe(calculate_statistic.name, () => {
         expect(resp).toStrictEqual(build_statistic(expected_statistic))
     });
 
+    it("should calculate statistic of a query with unions where multiple branch have multiple triple patterns", () => {
+        const query = translate(`
+        PREFIX ex: <http://example.org/>
+
+        SELECT * WHERE {
+        {
+            ?s ?p ?o.
+        }
+        UNION {
+            ?s <ex:a>/<ex:b> <ex:b>.
+            ?p <ex:b>+ <ex:c>.
+        }
+        UNION {
+            <ex:a> ?p ?o.
+            <ex:a> ?p2 ?o.
+        }
+
+        ?s ^<ex:foo>|(<ex:bar>/<ex:boo>) ?o.
+
+        {
+            <ex:d> <ex:a> ?v.
+        }
+        UNION {
+            <ex:d> ^<ex:a> ?k.
+        }
+        }
+        `);
+        const resp = calculate_statistic(query);
+
+        const expected_statistic: Partial<IQueryStatistic> = {
+            number_bgp: 5,
+            number_triple_patterns: 9,
+            number_property_path:4,
+            number_recursive_property_path:1,
+            number_union: 2,
+            number_union_with_multiple_triple_triple_patterns: 1
+        }
+
+        expect(resp).toStrictEqual(build_statistic(expected_statistic))
+    });
+
     it("should calculate statistic of a query with multiple distinct", () => {
         const query = translate(`
         PREFIX ex: <http://example.org/>
